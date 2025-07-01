@@ -608,53 +608,46 @@
         }
 
         document.getElementById('generate-shopping-list-btn').addEventListener('click', () => {
-            showConfirm('这将覆盖现有的清单（但保留勾选状态），确定要重新生成吗？', async () => {
+            showConfirm('这将覆盖现有的清单（但保留勾选状态），确定要重新生成吗？', async () => { // 提示语更精确
+                const recipeIds = [];
+                Object.values(currentPlan).forEach(dayPlan => {
+                    Object.values(dayPlan).forEach(recipeId => {
+                        if (recipeId) recipeIds.push(recipeId);  // 允许重复
+                    });
+                });
+
+                const recipesInPlan = recipeIds
+                    .map(id => allRecipes.find(r => r.id === id))
+                    .filter(Boolean);
+
+                const aggregatedIngredients = {};
+
+                recipesInPlan.forEach(recipe => {
+                    (recipe.ingredients || []).forEach(ing => {
+                        const key = `${ing.name} (${ing.unit})`.replace(/\./g, '_');
+                        const quantity = parseFloat(ing.quantity) || 0;
+
+                        if (aggregatedIngredients[key]) {
+                            aggregatedIngredients[key].quantity += quantity;
+                        } else {
+                            const existingItem = currentShoppingList[key];
+                            aggregatedIngredients[key] = {
+                                quantity: quantity,
+                                checked: existingItem ? existingItem.checked : false
+                            };
+                        }
+                    });
+                });
+
                 const weekId = getWeekId(displayDate);
-                const planDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/plans`, weekId);
-        
-                try {
-                    const docSnap = await getDoc(planDocRef);
-                    const planData = docSnap.exists() ? docSnap.data() : {};
-                    const latestMeals = planData.meals || {};
-                    const previousShoppingList = planData.shoppingList || {};
-        
-                    // 收集所有 recipeId
-                    const recipeIds = [];
-                    Object.values(latestMeals).forEach(dayPlan => {
-                        Object.values(dayPlan).forEach(recipeId => {
-                            if (recipeId) recipeIds.push(recipeId);
-                        });
-                    });
-        
-                    // 从 allRecipes 中找出对应菜谱
-                    const recipesInPlan = recipeIds
-                        .map(id => allRecipes.find(r => r.id === id))
-                        .filter(Boolean);
-        
-                    // 聚合所有食材
-                    const aggregatedIngredients = {};
-                    recipesInPlan.forEach(recipe => {
-                        (recipe.ingredients || []).forEach(ing => {
-                            const key = `${ing.name} (${ing.unit})`.replace(/\./g, '_');
-                            const quantity = parseFloat(ing.quantity) || 0;
-        
-                            if (!aggregatedIngredients[key]) {
-                                aggregatedIngredients[key] = {
-                                    quantity,
-                                    checked: previousShoppingList[key]?.checked || false
-                                };
-                            } else {
-                                aggregatedIngredients[key].quantity += quantity;
-                            }
-                        });
-                    });
-        
+                const planDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/plans`, weekId); 
+                try { 
                     await setDoc(planDocRef, { shoppingList: aggregatedIngredients }, { merge: true });
                     showToast('采购清单已生成！');
                     window.switchView('shoppingListView');
                 } catch (error) {
-                    console.error("Error regenerating shopping list:", error);
-                    showToast('清单生成失败，请重试。', true);
+                    console.error("Error generating shopping list:", error);
+                    showToast('清单生成失败', true);
                 }
             });
         });

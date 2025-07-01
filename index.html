@@ -254,7 +254,14 @@
         import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, setDoc, updateDoc, getDoc, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Config and Initialization ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvynHXJ8cxq2Hx9Y-XnZeW5UTfxJwfQGU",
+            authDomain: "food-planner-a24b5.firebaseapp.com",
+            projectId: "food-planner-a24b5",
+            storageBucket: "food-planner-a24b5.firebasestorage.app",
+            messagingSenderId: "1016260441476",
+            appId: "1:1016260441476:web:7cf51cab99a684fcbc99d1"
+        };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-family-recipe-app';
         let app, auth, db, userId;
         

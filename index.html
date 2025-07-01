@@ -287,13 +287,6 @@
     </div>
 
     <script type="module">
-        import {
-            getStorage,
-            ref,
-            uploadBytes,
-            getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
-        const storage = getStorage(app);
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
@@ -562,7 +555,7 @@
                 addToPlanIndicator.style.display = 'flex';
             }
         }
-        function createMealCard(recipe, day, meal) { return `<div class="w-full text-center cursor-pointer group relative" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.imageUrl || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" data-recipe-id="${recipe.id}" class="w-full h-20 object-cover rounded-md"><p class="text-sm font-medium mt-1 truncate">${recipe.name}</p><button onclick="event.stopPropagation(); window.removeMeal('${day}', '${meal}')" class="absolute top-1 right-1 p-1 bg-white/70 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button></div>`; }
+        function createMealCard(recipe, day, meal) { return `<div class="w-full text-center cursor-pointer group relative" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.imageBase64 || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" data-recipe-id="${recipe.id}" class="w-full h-20 object-cover rounded-md"><p class="text-sm font-medium mt-1 truncate">${recipe.name}</p><button onclick="event.stopPropagation(); window.removeMeal('${day}', '${meal}')" class="absolute top-1 right-1 p-1 bg-white/70 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button></div>`; }
         function createAddButton(day, meal) { const button = document.createElement('button'); button.className = 'w-full h-full flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-md transition'; if (isAddingToPlan) { button.classList.add('adding-mode-slot'); button.onclick = () => window.addRecipeToPlan(recipeToAdd.id, day, meal); } else { button.onclick = () => window.openAddToPlanModal(day, meal); } button.innerHTML = `<i data-lucide="plus" class="w-6 h-6"></i>`; return button; }
         
         document.getElementById('prev-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() - 7); setupPlanListener(); });
@@ -745,7 +738,7 @@
                     card.className = 'bg-white rounded-lg shadow-md overflow-hidden group/card relative';
                     card.innerHTML = 
                         `<div class="cursor-pointer" onclick="window.showRecipeDetail('${recipe.id}')">
-                            <img src="${recipe.imageUrl || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover">
+                            <img src="${recipe.imageBase64 || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover">
                             <div class="p-4">
                                 <h3 class="text-lg font-semibold text-slate-800">${recipe.name}</h3>
                                 <div class="mt-2 flex flex-wrap gap-2">
@@ -923,82 +916,36 @@
             fileInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToast('图片大小不能超过2MB', true); return; } const reader = new FileReader(); reader.onload = (event) => { selectedImageBase64 = event.target.result; imagePreview.src = selectedImageBase64; imagePreviewContainer.style.display = 'block'; imageUploadBox.style.display = 'none'; }; reader.readAsDataURL(file); } });
             addRecipeFormEl.querySelector('#addIngredientBtn').addEventListener('click', addIngredient);
             addRecipeFormEl.querySelector('#addStepBtn').addEventListener('click', () => addStep());
-            addRecipeForm.addEventListener('submit', async (e) => {
+            addRecipeFormEl.addEventListener('submit', async (e) => {
                 e.preventDefault();
-            
-                if (!currentUserId) {
-                    showToast("用户未登录", true);
-                    return;
-                }
-            
-                const ingredients = Array.from(addRecipeForm.querySelectorAll('.ingredient-item')).map(item => ({
-                    name: item.querySelector('input[type="text"]').value,
-                    quantity: parseFloat(item.querySelector('input[type="number"]').value),
-                    unit: item.querySelector('select').value
-                })).filter(i => i.name && !isNaN(i.quantity) && i.unit);
-            
-                const steps = Array.from(addRecipeForm.querySelectorAll('.step-item textarea'))
-                    .map(item => item.value)
-                    .filter(Boolean);
-            
-                const tags = Array.from(addRecipeForm.querySelectorAll('input[type="checkbox"]:checked'))
-                    .map(cb => cb.value);
-            
-                const mealTimeTags = Array.from(addRecipeForm.querySelectorAll('#tags-meal-time input:checked')).map(cb => cb.value);
-                const mainIngredientTags = Array.from(addRecipeForm.querySelectorAll('#tags-main-ingredient input:checked')).map(cb => cb.value);
-                const cuisineTags = Array.from(addRecipeForm.querySelectorAll('#tags-cuisine input:checked')).map(cb => cb.value);
-            
+                if (!currentUserId) { showToast("用户未登录", true); return; } 
+                const ingredients = Array.from(addRecipeFormEl.querySelectorAll('.ingredient-item')).map(item => ({ name: item.querySelector('input[type="text"]').value, quantity: parseFloat(item.querySelector('input[type="number"]').value), unit: item.querySelector('select').value })).filter(i => i.name && !isNaN(i.quantity) && i.unit);
+                const steps = Array.from(addRecipeFormEl.querySelectorAll('.step-item textarea')).map(item => item.value).filter(Boolean);
+                const tags = Array.from(addRecipeFormEl.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+                
+                const mealTimeTags = Array.from(addRecipeFormEl.querySelectorAll('#tags-meal-time input:checked')).map(cb => cb.value);
+                const mainIngredientTags = Array.from(addRecipeFormEl.querySelectorAll('#tags-main-ingredient input:checked')).map(cb => cb.value);
+                const cuisineTags = Array.from(addRecipeFormEl.querySelectorAll('#tags-cuisine input:checked')).map(cb => cb.value);
+
                 if (mealTimeTags.length === 0 || mainIngredientTags.length === 0 || cuisineTags.length === 0) {
                     showToast('每个属性标签类别至少需要选择一项。', true);
                     return;
                 }
-            
-                const recipeData = {
-                    name: addRecipeForm.querySelector('#recipeName').value,
-                    ingredients,
-                    steps,
-                    tags,
-                    authorId: currentUserId,
-                    createdAt: serverTimestamp()
-                };
-            
+
+                const recipeData = { name: addRecipeFormEl.querySelector('#recipeName').value, ingredients, steps, tags, authorId: currentUserId, createdAt: serverTimestamp(), hasImage: !!selectedImageBase64 }; 
                 try {
-                    const docRef = await addDoc(collection(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes`), recipeData);
-            
-                    const imageFile = fileInput.files[0];
-                    if (imageFile) {
-                        if (!imageFile.type.startsWith('image/')) {
-                            showToast('请上传图片文件', true);
-                            return;
-                        }
-                        if (imageFile.size > 2 * 1024 * 1024) {
-                            showToast('图片大小不能超过2MB', true);
-                            return;
-                        }
-            
-                        const imageRef = ref(storage, `recipes/${docRef.id}/${imageFile.name}`);
-                        await uploadBytes(imageRef, imageFile);
-                        const imageUrl = await getDownloadURL(imageRef);
-            
-                        await updateDoc(docRef, { imageUrl });
+                    const docRef = await addDoc(collection(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes`), recipeData); 
+                    if (selectedImageBase64) {
+                        const imageDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes/${docRef.id}/image/data`); 
+                        await setDoc(imageDocRef, { imageBase64: selectedImageBase64 });
                     }
-            
                     showToast("菜谱已成功保存！");
-                    addRecipeForm.reset();
-                    ingredientsList.innerHTML = '';
-                    stepsList.innerHTML = '';
-                    selectedImageBase64 = null;
-                    imagePreview.src = '#';
-                    imagePreviewContainer.style.display = 'none';
-                    imageUploadBox.style.display = 'flex';
-            
-                    addIngredient();
-                    addStep();
+                    addRecipeFormEl.reset();
+                    ingredientsList.innerHTML = ''; stepsList.innerHTML = ''; selectedImageBase64 = null;
+                    imagePreview.src = '#'; imagePreviewContainer.style.display = 'none'; imageUploadBox.style.display = 'flex';
+                    addIngredient(); addStep(); 
                     window.switchView('recipesView');
-                } catch (error) {
-                    console.error("Error adding document: ", error);
-                    showToast("保存失败，请检查网络或联系支持。", true);
-                }
+                } catch (error) { console.error("Error adding document: ", error); showToast("保存失败，请检查网络或联系支持。", true); }
             });
             if (ingredientsList.children.length === 0) addIngredient();
             if (stepsList.children.length === 0) addStep();

@@ -305,7 +305,7 @@
             updateDoc, 
             getDoc, 
             serverTimestamp, 
-            // setLogLevel // 调试完成后可以注释掉
+            deleteField // Add this import for FieldValue.delete()
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Config and Initialization ---
@@ -539,8 +539,6 @@
                     const recipeId = currentPlan[dayKey]?.[mealKey];
                     const recipe = allRecipes.find(r => r.id === recipeId);
                     
-                    mealSlot.innerHTML = `<h5 class="text-sm text-slate-400 mb-1">${mealNames[mealKey]}</h5>`;
-                    
                     if (recipe) { 
                         mealSlot.innerHTML += createMealCard(recipe, dayKey, mealKey); 
                     } else { 
@@ -604,27 +602,31 @@
 
         document.getElementById('generate-shopping-list-btn').addEventListener('click', () => {
             showConfirm('这将覆盖现有的清单（但保留勾选状态），确定要重新生成吗？', async () => { // 提示语更精确
-                const recipeIds = new Set();
+                const recipeIds = [];
                 Object.values(currentPlan).forEach(dayPlan => {
                     Object.values(dayPlan).forEach(recipeId => {
-                        if (recipeId) recipeIds.add(recipeId);
+                        if (recipeId) recipeIds.push(recipeId);  // 允许重复
                     });
                 });
 
-                const recipesInPlan = allRecipes.filter(r => recipeIds.has(r.id));
+                const recipesInPlan = recipeIds
+                    .map(id => allRecipes.find(r => r.id === id))
+                    .filter(Boolean);
+
                 const aggregatedIngredients = {};
 
                 recipesInPlan.forEach(recipe => {
                     (recipe.ingredients || []).forEach(ing => {
                         const key = `${ing.name} (${ing.unit})`.replace(/\./g, '_');
+                        const quantity = parseFloat(ing.quantity) || 0;
+
                         if (aggregatedIngredients[key]) {
-                            aggregatedIngredients[key].quantity += ing.quantity;
+                            aggregatedIngredients[key].quantity += quantity;
                         } else {
-                            // !!! 修复点: 确保保留现有购物清单项目的勾选状态 !!!
-                            const existingItem = currentShoppingList[key]; 
+                            const existingItem = currentShoppingList[key];
                             aggregatedIngredients[key] = {
-                                quantity: ing.quantity,
-                                checked: existingItem ? existingItem.checked : false // 如果存在，保留其勾选状态
+                                quantity: quantity,
+                                checked: existingItem ? existingItem.checked : false
                             };
                         }
                     });
@@ -632,7 +634,7 @@
 
                 const weekId = getWeekId(displayDate);
                 const planDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/plans`, weekId); 
-                try {
+                try { 
                     await setDoc(planDocRef, { shoppingList: aggregatedIngredients }, { merge: true });
                     showToast('采购清单已生成！');
                     window.switchView('shoppingListView');
@@ -687,14 +689,18 @@
             showConfirm('您确定要从计划中移除这道菜吗？', async () => {
                 const weekId = getWeekId(displayDate);
                 const planDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/plans`, weekId); 
-                const newPlan = JSON.parse(JSON.stringify(currentPlan));
-                if (newPlan[day]?.[meal]) {
-                    delete newPlan[day][meal];
-                }
+                
+                // Use deleteField to remove the specific meal from the Firestore document
+                const mealPath = `meals.${day}.${meal}`;
                 try {
-                    await setDoc(planDocRef, { meals: newPlan }, { merge: true });
+                    await updateDoc(planDocRef, {
+                        [mealPath]: deleteField()
+                    });
                     showToast('已从计划中移除');
-                } catch (error) { console.error("Error removing meal:", error); showToast('移除失败', true); }
+                } catch (error) { 
+                    console.error("Error removing meal:", error); 
+                    showToast('移除失败', true); 
+                }
             });
         };
 
@@ -720,10 +726,10 @@
             const filterMsg = document.getElementById('no-recipes-message');
             grid.innerHTML = '';
             
-            if (allRecipes.length === 0) { initialMsg.style.display = 'block'; filterMsg.style.display = 'none'; grid.style.display = 'none'; return; }    
+            if (allRecipes.length === 0) { initialMsg.style.display = 'block'; filterMsg.style.display = 'none'; grid.style.display = 'none'; return; }   
             else { initialMsg.style.display = 'none'; }
             
-            if (recipes.length === 0) { filterMsg.style.display = 'block'; grid.style.display = 'none'; }    
+            if (recipes.length === 0) { filterMsg.style.display = 'block'; grid.style.display = 'none'; }   
             else {
                 filterMsg.style.display = 'none';
                 grid.style.display = 'grid';

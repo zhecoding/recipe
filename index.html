@@ -433,15 +433,42 @@
 
         // --- Firestore Listeners ---
         function setupRecipeListener() {
-            if (unsubscribeRecipes) unsubscribeRecipes();    
-            if (!currentUserId) return; 
-            const collectionPath = `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes`; 
-            unsubscribeRecipes = onSnapshot(collection(db, collectionPath), (querySnapshot) => {
+            if (unsubscribeRecipes) unsubscribeRecipes();
+            if (!currentUserId) return;
+
+            const collectionPath = `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes`;
+
+            unsubscribeRecipes = onSnapshot(collection(db, collectionPath), async (querySnapshot) => {
                 allRecipes = [];
-                querySnapshot.forEach((doc) => { allRecipes.push({ id: doc.id, ...doc.data() }); });
-                allRecipes.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+                const loadImageTasks = [];
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const recipe = { id: docSnap.id, ...data };
+                    allRecipes.push(recipe);
+
+                    // 如果有图片，异步加载它
+                    if (recipe.hasImage) {
+                        const imageDocRef = doc(db, `artifacts/${FAMILY_APP_ID}/users/${currentUserId}/recipes/${recipe.id}/image/data`);
+                        const task = getDoc(imageDocRef).then((imgDoc) => {
+                            if (imgDoc.exists()) {
+                                recipe.imageBase64 = imgDoc.data().imageBase64;
+                            }
+                        }).catch((err) => {
+                            console.error(`加载图片失败 (${recipe.name})`, err);
+                        });
+                        loadImageTasks.push(task);
+                    }
+                });
+
+                // 按时间排序
+                allRecipes.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+
+                // 等待所有图片加载完
+                await Promise.all(loadImageTasks);
+
                 renderFilters();
-                applyFiltersAndRender();
+                applyFiltersAndRender(); // 重新渲染页面
             }, (error) => {
                 console.error("Error fetching recipes: ", error);
                 showToast('加载菜谱失败，请检查权限。', true);
@@ -530,7 +557,7 @@
                 addToPlanIndicator.style.display = 'flex';
             }
         }
-        function createMealCard(recipe, day, meal) { return `<div class="w-full text-center cursor-pointer group relative" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=加载中...' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" data-recipe-id="${recipe.id}" class="w-full h-20 object-cover rounded-md"><p class="text-sm font-medium mt-1 truncate">${recipe.name}</p><button onclick="event.stopPropagation(); window.removeMeal('${day}', '${meal}')" class="absolute top-1 right-1 p-1 bg-white/70 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button></div>`; }
+        function createMealCard(recipe, day, meal) { return `<div class="w-full text-center cursor-pointer group relative" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.imageBase64 || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" data-recipe-id="${recipe.id}" class="w-full h-20 object-cover rounded-md"><p class="text-sm font-medium mt-1 truncate">${recipe.name}</p><button onclick="event.stopPropagation(); window.removeMeal('${day}', '${meal}')" class="absolute top-1 right-1 p-1 bg-white/70 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button></div>`; }
         function createAddButton(day, meal) { const button = document.createElement('button'); button.className = 'w-full h-full flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-md transition'; if (isAddingToPlan) { button.classList.add('adding-mode-slot'); button.onclick = () => window.addRecipeToPlan(recipeToAdd.id, day, meal); } else { button.onclick = () => window.openAddToPlanModal(day, meal); } button.innerHTML = `<i data-lucide="plus" class="w-6 h-6"></i>`; return button; }
         
         document.getElementById('prev-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() - 7); setupPlanListener(); });
@@ -625,7 +652,7 @@
                 recipeListContainer.innerHTML = allRecipes.filter(r => r.name.toLowerCase().includes(searchTerm))
                     .map(r => 
                         `<div class="flex items-center p-2 rounded-md hover:bg-slate-100 cursor-pointer" onclick="window.addRecipeToPlan('${r.id}', '${day}', '${meal}')">
-                            <img src="${r.hasImage ? 'https://placehold.co/60x60/e2e8f0/64748b?text=...' : 'https://placehold.co/60x60/e2e8f0/64748b?text=无图'}" class="w-12 h-12 object-cover rounded-md mr-3">
+                            <img src="${r.imageBase64 || 'https://placehold.co/60x60/e2e8f0/64748b?text=无图'}" class="w-12 h-12 object-cover rounded-md mr-3">
                             <span class="font-medium">${r.name}</span>
                         </div>`
                     ).join('');
@@ -705,7 +732,7 @@
                     card.className = 'bg-white rounded-lg shadow-md overflow-hidden group/card relative';
                     card.innerHTML = 
                         `<div class="cursor-pointer" onclick="window.showRecipeDetail('${recipe.id}')">
-                            <img src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=菜谱图片' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover">
+                            <img src="${recipe.imageBase64 || 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover">
                             <div class="p-4">
                                 <h3 class="text-lg font-semibold text-slate-800">${recipe.name}</h3>
                                 <div class="mt-2 flex flex-wrap gap-2">

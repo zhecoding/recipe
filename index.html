@@ -215,9 +215,11 @@
                                 <div class="flex flex-wrap gap-x-4 gap-y-2">
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="猪肉"> <span class="ml-2 text-sm text-slate-700">猪肉</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="牛肉"> <span class="ml-2 text-sm text-slate-700">牛肉</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鸡肉"> <span class="ml-2 text-sm text-slate-700">鸡肉</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鸡鸭"> <span class="ml-2 text-sm text-slate-700">鸡鸭</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="羊肉"> <span class="ml-2 text-sm text-slate-700">羊肉</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鱼虾"> <span class="ml-2 text-sm text-slate-700">鱼虾</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鸡蛋"> <span class="ml-2 text-sm text-slate-700">鸡蛋</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="豆腐"> <span class="ml-2 text-sm text-slate-700">豆腐</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="蔬菜"> <span class="ml-2 text-sm text-slate-700">蔬菜</span></label>
                                 </div>
                             </div>
@@ -226,10 +228,15 @@
                                 <div class="flex flex-wrap gap-x-4 gap-y-2">
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="川菜"> <span class="ml-2 text-sm text-slate-700">川菜</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="东北菜"> <span class="ml-2 text-sm text-slate-700">东北菜</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="西北菜"> <span class="ml-2 text-sm text-slate-700">西北菜</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="粤菜"> <span class="ml-2 text-sm text-slate-700">粤菜</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="云南菜"> <span class="ml-2 text-sm text-slate-700">云南菜</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="湘菜"> <span class="ml-2 text-sm text-slate-700">湘菜</span></label>
                                     <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="日韩料理"> <span class="ml-2 text-sm text-slate-700">日韩料理</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="西餐"> <span class="ml-2 text-sm text-slate-700">西餐</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="东南亚"> <span class="ml-2 text-sm text-slate-700">东南亚</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="白人饭"> <span class="ml-2 text-sm text-slate-700">白人饭</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="面食"> <span class="ml-2 text-sm text-slate-700">面食</span></label>
+                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="小吃"> <span class="ml-2 text-sm text-slate-700">小吃</span></label>
                                 </div>
                             </div>
                         </div>
@@ -356,7 +363,7 @@
         const noShoppingListMessage = document.getElementById('no-shopping-list-message');
         const shoppingListTitle = document.getElementById('shopping-list-title');
 
-        const tagCategories = { "餐次": ["早餐", "午餐", "晚餐"], "主要食材": ["猪肉", "牛肉", "鸡肉", "羊肉", "鱼虾", "蔬菜"], "菜系": ["川菜", "东北菜", "粤菜", "云南菜", "日韩料理", "西餐"] };
+        const tagCategories = { "餐次": ["早餐", "午餐", "晚餐"], "主要食材": ["猪肉", "牛肉", "鸡鸭", "羊肉", "鱼虾", "鸡蛋", "豆腐", "蔬菜"], "菜系": ["川菜", "东北菜", "西北菜", "粤菜", "云南菜", "湘菜", "日韩料理", "东南亚", "白人饭", "面食", "小吃"] };
         const dayNames = { monday: "周一", tuesday: "周二", wednesday: "周三", thursday: "周四", friday: "周五", saturday: "周六", sunday: "周日" };
         const mealNames = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" };
 

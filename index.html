@@ -8,96 +8,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* slate-50 */
-        }
-        .tab-active {
-            border-bottom-color: #4f46e5; /* indigo-600 */
-            color: #4f46e5;
-            font-weight: 600;
-        }
-        .tab-inactive {
-            border-bottom-color: transparent;
-            color: #64748b; /* slate-500 */
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-active { border-bottom-color: #4f46e5; color: #4f46e5; font-weight: 600; }
+        .tab-inactive { border-bottom-color: transparent; color: #64748b; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .view { display: none; animation: fadeIn 0.5s; }
         .view.active { display: block; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .image-preview-container { display: none; width: 100%; height: 128px; margin-top: 1rem; }
         .image-preview { width: 100%; height: 100%; object-fit: cover; border-radius: 0.375rem; }
-        
         .filter-btn { transition: all 0.2s ease-in-out; }
         .filter-btn.active { background-color: #4f46e5; color: white; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
         .filter-btn.inactive { background-color: #e2e8f0; color: #475569; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(15, 23, 42, 0.6);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 50; opacity: 0; visibility: hidden;
-            transition: all 0.3s ease-in-out;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
-        .modal-content {
-            background: white; padding: 1.5rem; border-radius: 0.5rem;
-            width: 90%; max-width: 600px; max-height: 90vh;
-            overflow-y: auto; transform: scale(0.95);
-            transition: all 0.3s ease-in-out;
-        }
+        .modal-content { background: white; padding: 1.5rem; border-radius: 0.5rem; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: all 0.3s ease-in-out; }
         .modal-overlay.visible .modal-content { transform: scale(1); }
-        
         .meal-slot { min-height: 120px; }
-        .adding-mode-slot {
-            outline: 2px dashed #4f46e5;
-            outline-offset: 2px;
-            background-color: #eef2ff !important;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        .shopping-item-checked {
-            text-decoration: line-through;
-            color: #94a3b8; /* slate-400 */
-        }
+        .adding-mode-slot { outline: 2px dashed #4f46e5; outline-offset: 2px; background-color: #eef2ff !important; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .shopping-item-checked { text-decoration: line-through; color: #94a3b8; }
     </style>
 </head>
 <body class="antialiased text-slate-800">
 
-    <!-- Login Overlay -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-100 z-[100] flex items-center justify-center p-4">
-        <div class="w-full max-w-sm p-8 bg-white rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold text-center text-slate-800 mb-2">🍳</h2>
-            <h2 class="text-xl font-bold text-center text-slate-800 mb-6">家庭厨房小助手</h2>
-            <form id="login-form">
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">家庭密码</label>
-                    <input type="password" id="password" class="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
-                </div>
-                <p id="login-error" class="text-red-500 text-sm mb-4 hidden">密码错误，请重试。</p>
-                <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    进入
-                </button>
-            </form>
-            <p class="text-xs text-slate-400 text-center mt-4">这是一个私有应用，请输入家庭共享密码访问。</p>
+        <div class="w-full max-w-sm p-8 bg-white rounded-xl shadow-lg text-center">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">🍳</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">家庭厨房小助手</h2>
+            <p class="text-slate-500 mb-8">请登录以访问共享的菜谱和计划</p>
+            <button id="google-signin-btn" class="w-full inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"></path><path fill="#34A853" d="M24 46c5.94 0 10.92-1.96 14.56-5.3l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 40.5 15.44 46 24 46z"></path><path fill="#FBBC05" d="M11.69 28.18c-.4-.92-.62-1.92-.62-2.93s.22-2.01.62-2.93v-5.7H4.34C2.85 19.49 2 21.65 2 24.25s.85 4.76 2.34 6.58l7.35-5.7z"></path><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.44 2 7.96 7.5 4.34 13.82l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"></path><path fill="none" d="M2 2h44v44H2z"></path></svg>
+                使用 Google 账户登录
+            </button>
         </div>
     </div>
 
-
     <div id="app-container" class="hidden max-w-7xl mx-auto p-4 md:p-6">
         <header class="mb-6">
-            <h1 class="text-3xl font-bold text-slate-900">家庭厨房小助手</h1>
-            <p class="text-slate-500 mt-1">管理您的菜谱、规划每周膳食并生成购物清单。</p>
-            <p id="userIdDisplay" class="text-xs text-slate-400 mt-2"></p>
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900">家庭厨房小助手</h1>
+                    <p class="text-slate-500 mt-1">管理您的菜谱、规划每周膳食并生成购物清单。</p>
+                </div>
+                <div id="user-info" class="text-right flex-shrink-0 ml-4">
+                    <p id="user-display" class="text-sm font-medium text-slate-700 truncate"></p>
+                    <button id="signout-btn" class="text-xs text-indigo-600 hover:text-indigo-800 hover:underline">退出登录</button>
+                </div>
+            </div>
         </header>
 
         <nav class="mb-6 border-b border-slate-200">
@@ -105,27 +66,21 @@
                 <li><button onclick="window.switchView('recipesView')" class="py-3 px-1 text-sm md:text-base border-b-2 tab-inactive">我的菜谱</button></li>
                 <li><button onclick="window.switchView('planView')" class="py-3 px-1 text-sm md:text-base border-b-2 tab-inactive">周计划</button></li>
                 <li><button onclick="window.switchView('shoppingListView')" class="py-3 px-1 text-sm md:text-base border-b-2 tab-inactive">采购清单</button></li>
-                <li><button onclick="window.switchView('addRecipeView')" class="py-3 px-1 text-sm md:text-base border-b-2 tab-active">添加新菜谱</button></li>
+                <li><button onclick="window.switchView('addRecipeView')" class="py-3 px-1 text-sm md:text-base border-b-2 tab-inactive">添加新菜谱</button></li>
             </ul>
         </nav>
 
         <main>
-            <!-- My Recipes View -->
             <div id="recipesView" class="view">
                 <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-200 mb-6 space-y-4">
                     <div id="filter-container"></div>
                      <button id="clearFiltersBtn" class="text-sm text-indigo-600 hover:text-indigo-800">清空筛选</button>
                 </div>
                 <div id="recipe-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-                <div id="no-recipes-message" class="hidden text-center p-10 bg-white rounded-lg shadow-sm border border-slate-200">
-                    <p class="text-slate-500">没有找到匹配的菜谱。请尝试调整筛选条件。</p>
-                </div>
-                 <div id="no-recipes-initial-message" class="hidden text-center p-10 bg-white rounded-lg shadow-sm border border-slate-200">
-                    <p class="text-slate-500">您还没有添加任何菜谱。请先到“添加新菜谱”页面开始吧！</p>
-                </div>
+                <div id="no-recipes-message" class="hidden text-center p-10 bg-white rounded-lg shadow-sm border border-slate-200"><p class="text-slate-500">没有找到匹配的菜谱。请尝试调整筛选条件。</p></div>
+                 <div id="no-recipes-initial-message" class="hidden text-center p-10 bg-white rounded-lg shadow-sm border border-slate-200"><p class="text-slate-500">您还没有添加任何菜谱。请先到“添加新菜谱”页面开始吧！</p></div>
             </div>
 
-            <!-- Weekly Plan View -->
             <div id="planView" class="view">
                 <div class="p-4 bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
                     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -135,9 +90,7 @@
                             <button id="today-week-btn" class="text-sm font-medium px-3 py-1.5 rounded-md hover:bg-slate-100">返回本周</button>
                             <button id="next-week-btn" class="p-2 rounded-md hover:bg-slate-100"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
                         </div>
-                        <button id="generate-shopping-list-btn" class="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                            <i data-lucide="list-plus" class="w-5 h-5 mr-2"></i>生成本周采购清单
-                        </button>
+                        <button id="generate-shopping-list-btn" class="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"><i data-lucide="list-plus" class="w-5 h-5 mr-2"></i>生成本周采购清单</button>
                     </div>
                     <h3 id="week-range-display" class="text-center text-lg font-medium text-slate-600 mt-4"></h3>
                 </div>
@@ -148,8 +101,7 @@
                 <div id="plan-grid" class="grid grid-cols-1 md:grid-cols-7 gap-2"></div>
             </div>
 
-            <!-- Add Recipe View -->
-            <div id="addRecipeView" class="view active">
+            <div id="addRecipeView" class="view">
                  <form id="addRecipeForm" class="space-y-8 max-w-4xl mx-auto">
                     <div class="p-6 bg-white rounded-lg shadow-sm border border-slate-200">
                         <h2 class="text-xl font-semibold mb-4">1. 基本信息</h2>
@@ -164,85 +116,48 @@
                                     <div class="space-y-1 text-center">
                                         <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                         <div class="flex text-sm text-slate-600">
-                                            <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                                <span>上传文件</span>
-                                                <input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/*">
-                                            </label>
+                                            <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"><span>上传文件</span><input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/*"></label>
                                             <p class="pl-1">或拖拽到此处</p>
                                         </div>
                                         <p class="text-xs text-slate-500">PNG, JPG, GIF, 不超过 2MB</p>
                                     </div>
                                 </div>
-                                <div id="image-preview-container" class="image-preview-container">
-                                    <img id="image-preview" src="#" alt="图片预览" class="image-preview"/>
-                                </div>
+                                <div id="image-preview-container" class="image-preview-container"><img id="image-preview" src="#" alt="图片预览" class="image-preview"/></div>
                             </div>
                         </div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm border border-slate-200">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold">2. 所需食材</h2>
-                            <button type="button" id="addIngredientBtn" class="flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <i data-lucide="plus" class="w-4 h-4 mr-1"></i> 添加
-                            </button>
+                            <button type="button" id="addIngredientBtn" class="flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> 添加</button>
                         </div>
                         <div id="ingredientsList" class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar pr-2"></div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm border border-slate-200">
                          <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold">3. 烹饪步骤</h2>
-                            <button type="button" id="addStepBtn" class="flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <i data-lucide="plus" class="w-4 h-4 mr-1"></i> 添加
-                            </button>
+                            <button type="button" id="addStepBtn" class="flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> 添加</button>
                         </div>
                         <div id="stepsList" class="space-y-4 max-h-80 overflow-y-auto custom-scrollbar pr-2"></div>
                     </div>
                     <div class="p-6 bg-white rounded-lg shadow-sm border border-slate-200">
                         <h2 class="text-xl font-semibold mb-4">4. 属性标签 (每个类别至少选一项)</h2>
                         <div class="space-y-6">
-                            <div id="tags-meal-time">
-                                <h3 class="text-sm font-medium text-slate-800 mb-2">餐次</h3>
-                                <div class="flex flex-wrap gap-x-4 gap-y-2">
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="早餐"> <span class="ml-2 text-sm text-slate-700">早餐</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="午餐"> <span class="ml-2 text-sm text-slate-700">午餐</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="晚餐"> <span class="ml-2 text-sm text-slate-700">晚餐</span></label>
-                                </div>
-                            </div>
-                            <div id="tags-main-ingredient">
-                                <h3 class="text-sm font-medium text-slate-800 mb-2">主要食材</h3>
-                                <div class="flex flex-wrap gap-x-4 gap-y-2">
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="猪肉"> <span class="ml-2 text-sm text-slate-700">猪肉</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="牛肉"> <span class="ml-2 text-sm text-slate-700">牛肉</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鸡肉"> <span class="ml-2 text-sm text-slate-700">鸡肉</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="羊肉"> <span class="ml-2 text-sm text-slate-700">羊肉</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鱼虾"> <span class="ml-2 text-sm text-slate-700">鱼虾</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="蔬菜"> <span class="ml-2 text-sm text-slate-700">蔬菜</span></label>
-                                </div>
-                            </div>
-                            <div id="tags-cuisine">
-                                <h3 class="text-sm font-medium text-slate-800 mb-2">菜系</h3>
-                                <div class="flex flex-wrap gap-x-4 gap-y-2">
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="川菜"> <span class="ml-2 text-sm text-slate-700">川菜</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="东北菜"> <span class="ml-2 text-sm text-slate-700">东北菜</span></label>
-                                    <label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="粤菜"> <span class="ml-2 text-sm text-slate-700">粤菜</span></label>
-                                </div>
-                            </div>
+                            <div id="tags-meal-time"><h3 class="text-sm font-medium text-slate-800 mb-2">餐次</h3><div class="flex flex-wrap gap-x-4 gap-y-2"><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="早餐"> <span class="ml-2 text-sm text-slate-700">早餐</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="午餐"> <span class="ml-2 text-sm text-slate-700">午餐</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="晚餐"> <span class="ml-2 text-sm text-slate-700">晚餐</span></label></div></div>
+                            <div id="tags-main-ingredient"><h3 class="text-sm font-medium text-slate-800 mb-2">主要食材</h3><div class="flex flex-wrap gap-x-4 gap-y-2"><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="猪肉"> <span class="ml-2 text-sm text-slate-700">猪肉</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="牛肉"> <span class="ml-2 text-sm text-slate-700">牛肉</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鸡肉"> <span class="ml-2 text-sm text-slate-700">鸡肉</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="羊肉"> <span class="ml-2 text-sm text-slate-700">羊肉</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="鱼虾"> <span class="ml-2 text-sm text-slate-700">鱼虾</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="蔬菜"> <span class="ml-2 text-sm text-slate-700">蔬菜</span></label></div></div>
+                            <div id="tags-cuisine"><h3 class="text-sm font-medium text-slate-800 mb-2">菜系</h3><div class="flex flex-wrap gap-x-4 gap-y-2"><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="川菜"> <span class="ml-2 text-sm text-slate-700">川菜</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="东北菜"> <span class="ml-2 text-sm text-slate-700">东北菜</span></label><label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="粤菜"> <span class="ml-2 text-sm text-slate-700">粤菜</span></label></div></div>
                         </div>
                     </div>
                     <div class="flex justify-end">
-                        <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <i data-lucide="save" class="w-5 h-5 mr-2"></i> 保存菜谱
-                        </button>
+                        <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><i data-lucide="save" class="w-5 h-5 mr-2"></i> 保存菜谱</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Shopping List View -->
             <div id="shoppingListView" class="view"><div class="p-6 bg-white rounded-lg shadow-sm border border-slate-200 max-w-4xl mx-auto"><div class="flex flex-wrap items-center justify-between gap-4 mb-4"><h2 id="shopping-list-title" class="text-xl font-semibold text-slate-800">采购清单</h2></div><div id="shopping-list-container" class="space-y-3"></div><div id="no-shopping-list-message" class="hidden text-center py-10"><p class="text-slate-500">此周还没有采购清单。</p><p class="text-sm text-slate-400 mt-2">请前往“周计划”页面，为您安排好的菜单生成清单。</p></div></div></div>
         </main>
     </div>
 
-    <!-- Modals and Toast -->
     <div id="recipe-detail-modal" class="modal-overlay custom-scrollbar"><div id="modal-content" class="modal-content custom-scrollbar"></div></div>
     <div id="add-to-plan-modal" class="modal-overlay custom-scrollbar"><div class="modal-content custom-scrollbar"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-slate-900">选择要添加的菜谱</h2><button id="close-add-to-plan-modal-btn" class="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div><input type="text" id="add-to-plan-search" placeholder="搜索菜谱..." class="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm mb-4"><div id="add-to-plan-recipe-list" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar"></div></div></div>
     <div id="confirm-modal" class="modal-overlay"><div class="modal-content !max-w-sm"><h3 class="text-lg font-medium text-gray-900">请确认操作</h3><div class="mt-2"><p id="confirm-modal-message" class="text-sm text-gray-500"></p></div><div class="mt-4 flex justify-end space-x-3"><button id="confirm-modal-cancel-btn" type="button" class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50">取消</button><button id="confirm-modal-confirm-btn" type="button" class="px-4 py-2 bg-red-600 text-white border border-transparent rounded-md hover:bg-red-700">确认</button></div></div></div>
@@ -250,113 +165,102 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, setDoc, updateDoc, getDoc, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, setDoc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Config and Initialization ---
+        // =========================================================================================
+        // =================  PASTE YOUR FIREBASE CONFIG OBJECT HERE  ==============================
+        // =========================================================================================
         const firebaseConfig = {
-            apiKey: "AIzaSyAvynHXJ8cxq2Hx9Y-XnZeW5UTfxJwfQGU",
-            authDomain: "food-planner-a24b5.firebaseapp.com",
-            projectId: "food-planner-a24b5",
-            storageBucket: "food-planner-a24b5.firebasestorage.app",
-            messagingSenderId: "1016260441476",
-            appId: "1:1016260441476:web:7cf51cab99a684fcbc99d1"
+            apiKey: "AIzaSyA7SiR14A2hiHfaHIOhXrqnQQT8f7_unX8",
+            authDomain: "recipe-planner-5c457.firebaseapp.com",
+            projectId: "recipe-planner-5c457",
+            storageBucket: "recipe-planner-5c457.firebasestorage.app",
+            messagingSenderId: "727915591417",
+            appId: "1:727915591417:web:e45b04650d2b479aca5428"
         };
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-family-recipe-app';
-        let app, auth, db, userId;
+
+        // =========================================================================================
+
+        const SHARED_DATA_ID = 'ourFamilyRecipes'; 
+        let app, auth, db, userId, userEmail;
+        let allRecipes = [], activeFilters = new Set(), unsubscribeRecipes = null, unsubscribePlan = null;
+        let currentPlan = {}, currentShoppingList = {}, displayDate = new Date(), isAddingToPlan = false, recipeToAdd = null, selectedImageBase64 = null;
         
-        // --- Security ---
-        const FAMILY_PASSWORD = "chifan"; // **重要**: 请修改为您自己的密码!
-
-        // --- Global State ---
-        let allRecipes = [];
-        let activeFilters = new Set();
-        let unsubscribeRecipes = null;
-        let unsubscribePlan = null;
-        let currentPlan = {};
-        let currentShoppingList = {};
-        let displayDate = new Date();
-        let isAddingToPlan = false;
-        let recipeToAdd = null;
-
-        // --- UI Elements ---
-        const loginOverlay = document.getElementById('login-overlay');
-        const appContainer = document.getElementById('app-container');
-        const loginForm = document.getElementById('login-form');
-        const passwordInput = document.getElementById('password');
-        const loginError = document.getElementById('login-error');
-        const recipeDetailModal = document.getElementById('recipe-detail-modal');
-        const addToPlanModal = document.getElementById('add-to-plan-modal');
-        const planGrid = document.getElementById('plan-grid');
-        const weekRangeDisplay = document.getElementById('week-range-display');
-        const addToPlanIndicator = document.getElementById('add-to-plan-indicator');
-        const confirmModal = document.getElementById('confirm-modal');
-        const shoppingListContainer = document.getElementById('shopping-list-container');
-        const noShoppingListMessage = document.getElementById('no-shopping-list-message');
-        const shoppingListTitle = document.getElementById('shopping-list-title');
+        const ui = {
+            loginOverlay: document.getElementById('login-overlay'),
+            appContainer: document.getElementById('app-container'),
+            googleSignInBtn: document.getElementById('google-signin-btn'),
+            signOutBtn: document.getElementById('signout-btn'),
+            userDisplay: document.getElementById('user-display'),
+            recipeDetailModal: document.getElementById('recipe-detail-modal'),
+            addToPlanModal: document.getElementById('add-to-plan-modal'),
+            planGrid: document.getElementById('plan-grid'),
+            weekRangeDisplay: document.getElementById('week-range-display'),
+            addToPlanIndicator: document.getElementById('add-to-plan-indicator'),
+            confirmModal: document.getElementById('confirm-modal'),
+            shoppingListContainer: document.getElementById('shopping-list-container'),
+            noShoppingListMessage: document.getElementById('no-shopping-list-message'),
+            shoppingListTitle: document.getElementById('shopping-list-title'),
+            recipeGrid: document.getElementById('recipe-grid'),
+            initialMsg: document.getElementById('no-recipes-initial-message'),
+            filterMsg: document.getElementById('no-recipes-message')
+        };
 
         const tagCategories = { "餐次": ["早餐", "午餐", "晚餐"], "主要食材": ["猪肉", "牛肉", "鸡肉", "羊肉", "鱼虾", "蔬菜"], "菜系": ["川菜", "东北菜", "粤菜"] };
         const dayNames = { monday: "周一", tuesday: "周二", wednesday: "周三", thursday: "周四", friday: "周五", saturday: "周六", sunday: "周日" };
         const mealNames = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" };
 
-        // --- Main App Logic ---
-        function initializeAppAndAuth() {
+        function initializeAppAndListeners() {
             try {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                setLogLevel('debug');
-            } catch (e) {
-                console.error("Error initializing Firebase:", e);
-                showToast("无法连接到数据库", true);
-                return;
-            }
+            } catch (e) { console.error("Error initializing Firebase:", e); showToast("无法连接到数据库", true); return; }
 
-            onAuthStateChanged(auth, async (user) => {
+            onAuthStateChanged(auth, (user) => {
                 if (user) {
                     userId = user.uid;
-                    document.getElementById('userIdDisplay').textContent = `家庭ID: ${userId}`;
+                    userEmail = user.email;
+                    ui.userDisplay.textContent = `${user.displayName || user.email}`;
+                    ui.loginOverlay.style.display = 'none';
+                    ui.appContainer.style.display = 'block';
                     setupRecipeListener();
                     setupPlanListener();
+                    switchView('recipesView');
                 } else {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } 
-                        else { await signInAnonymously(auth); }
-                    } catch (error) { console.error("Authentication Error:", error); showToast("身份验证失败", true); }
+                    ui.loginOverlay.style.display = 'flex';
+                    ui.appContainer.style.display = 'none';
+                    if(unsubscribeRecipes) unsubscribeRecipes();
+                    if(unsubscribePlan) unsubscribePlan();
                 }
             });
-            
-            appContainer.style.display = 'block';
-            window.switchView('recipesView');
         }
 
-        // --- Login Logic ---
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (passwordInput.value === FAMILY_PASSWORD) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                loginOverlay.style.display = 'none';
-                initializeAppAndAuth();
-            } else {
-                loginError.style.display = 'block';
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
-        });
-
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            loginOverlay.style.display = 'none';
-            initializeAppAndAuth();
+        async function handleSignIn() {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                const userDocRef = doc(db, "allowedUsers", user.email);
+                const userDoc = await getDoc(userDocRef);
+                if (!userDoc.exists()) {
+                    showToast("抱歉，此账户未被授权访问。", true);
+                    await signOut(auth);
+                }
+            } catch (error) { console.error("Authentication error:", error); showToast("登录失败，请重试", true); }
         }
 
-        // --- Firestore Listeners ---
+        async function handleSignOut() {
+            try { await signOut(auth); } 
+            catch (error) { console.error("Sign Out Error:", error); showToast("退出失败", true); }
+        }
+
         function setupRecipeListener() {
-            if (unsubscribeRecipes) unsubscribeRecipes(); 
-            if (!userId) return;
-            const collectionPath = `artifacts/${appId}/users/${userId}/recipes`;
+            if (unsubscribeRecipes) unsubscribeRecipes();
+            const collectionPath = `familyData/${SHARED_DATA_ID}/recipes`;
             unsubscribeRecipes = onSnapshot(collection(db, collectionPath), (querySnapshot) => {
-                allRecipes = [];
-                querySnapshot.forEach((doc) => { allRecipes.push({ id: doc.id, ...doc.data() }); });
+                allRecipes = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                 allRecipes.sort((a,b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
                 renderFilters();
                 applyFiltersAndRender();
@@ -365,9 +269,8 @@
 
         function setupPlanListener() {
             if (unsubscribePlan) unsubscribePlan();
-            if (!userId) return;
             const weekId = getWeekId(displayDate);
-            const planDocRef = doc(db, `artifacts/${appId}/users/${userId}/plans`, weekId);
+            const planDocRef = doc(db, `familyData/${SHARED_DATA_ID}/plans`, weekId);
             unsubscribePlan = onSnapshot(planDocRef, (docSnap) => {
                 const data = docSnap.exists() ? docSnap.data() : {};
                 currentPlan = data.meals || {};
@@ -375,470 +278,98 @@
                 renderCurrentView();
             }, (error) => console.error("Error fetching plan: ", error));
         }
-
-        // --- Date Helpers ---
-        function getWeekId(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 1 - (d.getUTCDay() || 7));
-            return d.toISOString().slice(0, 10);
-        }
-        function getWeekRange(d) {
-            const start = new Date(getWeekId(d));
-            const end = new Date(start);
-            end.setDate(end.getDate() + 6);
-            const format = (date) => `${date.getMonth() + 1}月${date.getDate()}日`;
-            return `${format(start)} - ${format(end)}`;
-        }
-
-        // --- View Rendering ---
-        function renderCurrentView() {
-            const activeView = document.querySelector('.view.active');
-            if (!activeView) return;
-
-            if (activeView.id === 'planView') {
-                weekRangeDisplay.textContent = getWeekRange(displayDate);
-                renderPlanGrid();
-            } else if (activeView.id === 'shoppingListView') {
-                renderShoppingListView();
-            } else if (activeView.id === 'recipesView') {
-                applyFiltersAndRender();
-            }
-        }
-
-        // --- Plan View Logic ---
-        function renderPlanGrid() {
-            planGrid.innerHTML = '';
-            const weekStart = new Date(getWeekId(displayDate));
-            Object.keys(dayNames).forEach((dayKey, i) => {
-                const dayDate = new Date(weekStart); dayDate.setDate(weekStart.getDate() + i);
-                const dayCol = document.createElement('div');
-                dayCol.className = 'bg-white rounded-lg shadow-sm border border-slate-200 p-3 flex flex-col space-y-2';
-                dayCol.innerHTML = `<h4 class="text-center font-semibold">${dayNames[dayKey]} <span class="text-sm text-slate-500 font-normal">${dayDate.getDate()}</span></h4>`;
-                Object.keys(mealNames).forEach(mealKey => {
-                    const mealSlot = document.createElement('div');
-                    mealSlot.className = 'meal-slot bg-slate-50 rounded-md p-2 flex flex-col justify-center items-center';
-                    const recipeId = currentPlan[dayKey]?.[mealKey];
-                    const recipe = allRecipes.find(r => r.id === recipeId);
-                    mealSlot.innerHTML = `<h5 class="text-sm text-slate-400 mb-1">${mealNames[mealKey]}</h5>`;
-                    if (recipe) { mealSlot.innerHTML += createMealCard(recipe, dayKey, mealKey); } 
-                    else { mealSlot.appendChild(createAddButton(dayKey, mealKey)); }
-                    dayCol.appendChild(mealSlot);
-                });
-                planGrid.appendChild(dayCol);
-            });
-            lucide.createIcons();
-        }
-        function createMealCard(recipe, day, meal) { return `<div class="w-full text-center cursor-pointer group relative" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=加载中...' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" data-recipe-id="${recipe.id}" class="w-full h-20 object-cover rounded-md"><p class="text-sm font-medium mt-1 truncate">${recipe.name}</p><button onclick="event.stopPropagation(); window.removeMeal('${day}', '${meal}')" class="absolute top-1 right-1 p-1 bg-white/70 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="x-circle" class="w-5 h-5"></i></button></div>`; }
-        function createAddButton(day, meal) { const button = document.createElement('button'); button.className = 'w-full h-full flex items-center justify-center text-slate-400 hover:bg-slate-100 rounded-md transition'; if (isAddingToPlan) { button.classList.add('adding-mode-slot'); button.onclick = () => window.addRecipeToPlan(recipeToAdd.id, day, meal); } else { button.onclick = () => window.openAddToPlanModal(day, meal); } button.innerHTML = `<i data-lucide="plus" class="w-6 h-6"></i>`; return button; }
         
-        document.getElementById('prev-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() - 7); setupPlanListener(); });
-        document.getElementById('next-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() + 7); setupPlanListener(); });
-        document.getElementById('today-week-btn').addEventListener('click', () => { displayDate = new Date(); setupPlanListener(); });
-        
-        // --- Shopping List Logic ---
-        function renderShoppingListView() {
-            shoppingListTitle.textContent = `${getWeekRange(displayDate)} 采购清单`;
-            shoppingListContainer.innerHTML = '';
-            const items = Object.entries(currentShoppingList);
-
-            if (items.length === 0) {
-                noShoppingListMessage.style.display = 'block';
-            } else {
-                noShoppingListMessage.style.display = 'none';
-                items.sort((a, b) => a[1].checked - b[1].checked);
-                items.forEach(([key, item]) => {
-                    const li = document.createElement('label');
-                    li.className = 'flex items-center p-3 bg-slate-50 rounded-md hover:bg-slate-100 transition cursor-pointer';
-                    li.innerHTML = `
-                        <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${item.checked ? 'checked' : ''}>
-                        <span class="ml-3 flex-grow ${item.checked ? 'shopping-item-checked' : ''}">${key.replace(/_/g, '.')}</span>
-                        <span class="text-sm font-medium ${item.checked ? 'shopping-item-checked' : 'text-slate-600'}">${item.quantity}</span>
-                    `;
-                    li.querySelector('input').addEventListener('change', (e) => {
-                        updateShoppingListItemStatus(key, e.target.checked);
-                    });
-                    shoppingListContainer.appendChild(li);
-                });
-            }
-        }
-
-        async function updateShoppingListItemStatus(key, isChecked) {
-            const weekId = getWeekId(displayDate);
-            const planDocRef = doc(db, `artifacts/${appId}/users/${userId}/plans`, weekId);
-            const updatePath = `shoppingList.${key}.checked`;
-            try {
-                await updateDoc(planDocRef, { [updatePath]: isChecked });
-            } catch (error) {
-                console.error("Error updating shopping list item:", error);
-                showToast('更新失败', true);
-            }
-        }
-
-        document.getElementById('generate-shopping-list-btn').addEventListener('click', () => {
-             showConfirm('这将覆盖现有的清单，确定要重新生成吗？', async () => {
-                const recipeIds = new Set();
-                Object.values(currentPlan).forEach(dayPlan => {
-                    Object.values(dayPlan).forEach(recipeId => {
-                        if (recipeId) recipeIds.add(recipeId);
-                    });
-                });
-
-                const recipesInPlan = allRecipes.filter(r => recipeIds.has(r.id));
-                const aggregatedIngredients = {};
-
-                recipesInPlan.forEach(recipe => {
-                    (recipe.ingredients || []).forEach(ing => {
-                        const key = `${ing.name} (${ing.unit})`.replace(/\./g, '_');
-                        if (aggregatedIngredients[key]) {
-                            aggregatedIngredients[key].quantity += ing.quantity;
-                        } else {
-                            aggregatedIngredients[key] = {
-                                quantity: ing.quantity,
-                                checked: false
-                            };
-                        }
-                    });
-                });
-
-                const weekId = getWeekId(displayDate);
-                const planDocRef = doc(db, `artifacts/${appId}/users/${userId}/plans`, weekId);
-                try {
-                    await setDoc(planDocRef, { shoppingList: aggregatedIngredients }, { merge: true });
-                    showToast('采购清单已生成！');
-                    window.switchView('shoppingListView');
-                } catch (error) {
-                    console.error("Error generating shopping list:", error);
-                    showToast('清单生成失败', true);
-                }
-            });
-        });
-        
-        window.openAddToPlanModal = (day, meal) => {
-            document.getElementById('add-to-plan-recipe-list').innerHTML = allRecipes.map(r => `
-                <div class="flex items-center p-2 rounded-md hover:bg-slate-100 cursor-pointer" onclick="window.addRecipeToPlan('${r.id}', '${day}', '${meal}')">
-                    <img src="${r.hasImage ? 'https://placehold.co/60x60/e2e8f0/64748b?text=...' : 'https://placehold.co/60x60/e2e8f0/64748b?text=无图'}" class="w-12 h-12 object-cover rounded-md mr-3">
-                    <span class="font-medium">${r.name}</span>
-                </div>
-            `).join('');
-            addToPlanModal.classList.add('visible');
-        };
-
-        window.addRecipeToPlan = async (recipeId, day, meal) => {
-            const weekId = getWeekId(displayDate);
-            const planDocRef = doc(db, `artifacts/${appId}/users/${userId}/plans`, weekId);
-            const newPlan = JSON.parse(JSON.stringify(currentPlan));
-            if (!newPlan[day]) newPlan[day] = {};
-            newPlan[day][meal] = recipeId;
-            try {
-                await setDoc(planDocRef, { meals: newPlan }, { merge: true });
-                showToast('已添加到计划！');
-            } catch (error) {
-                console.error("Error updating plan:", error);
-                showToast('添加失败', true);
-            } finally {
-                addToPlanModal.classList.remove('visible');
-                cancelAddToPlanMode();
-            }
-        };
-
-        window.removeMeal = (day, meal) => {
-            showConfirm('您确定要从计划中移除这道菜吗？', async () => {
-                const weekId = getWeekId(displayDate);
-                const planDocRef = doc(db, `artifacts/${appId}/users/${userId}/plans`, weekId);
-                const newPlan = JSON.parse(JSON.stringify(currentPlan));
-                if (newPlan[day]?.[meal]) {
-                    delete newPlan[day][meal];
-                }
-                try {
-                    await setDoc(planDocRef, { meals: newPlan }, { merge: true });
-                    showToast('已从计划中移除');
-                } catch (error) { console.error("Error removing meal:", error); showToast('移除失败', true); }
-            });
-        };
-
-        window.openAddToPlanFromRecipe = (recipeId, recipeName) => {
-            isAddingToPlan = true;
-            recipeToAdd = { id: recipeId, name: recipeName };
-            window.switchView('planView', true);
-        };
-
-        window.cancelAddToPlanMode = () => {
-            isAddingToPlan = false;
-            recipeToAdd = null;
-            addToPlanIndicator.style.display = 'none';
-            if (document.getElementById('planView').classList.contains('active')) {
-                renderPlanGrid();
-            }
-        };
-
         function renderRecipes(recipes) {
-            const grid = document.getElementById('recipe-grid');
-            const initialMsg = document.getElementById('no-recipes-initial-message');
-            const filterMsg = document.getElementById('no-recipes-message');
-            grid.innerHTML = '';
-            
-            if (allRecipes.length === 0) { initialMsg.style.display = 'block'; filterMsg.style.display = 'none'; grid.style.display = 'none'; return; } 
-            else { initialMsg.style.display = 'none'; }
-            
-            if (recipes.length === 0) { filterMsg.style.display = 'block'; grid.style.display = 'none'; } 
+            ui.recipeGrid.innerHTML = '';
+            if (allRecipes.length === 0) { ui.initialMsg.style.display = 'block'; ui.filterMsg.style.display = 'none'; ui.recipeGrid.style.display = 'none'; return; } 
+            else { ui.initialMsg.style.display = 'none'; }
+            if (recipes.length === 0) { ui.filterMsg.style.display = 'block'; ui.recipeGrid.style.display = 'none'; } 
             else {
-                filterMsg.style.display = 'none';
-                grid.style.display = 'grid';
+                ui.filterMsg.style.display = 'none'; ui.recipeGrid.style.display = 'grid';
                 recipes.forEach(recipe => {
                     const card = document.createElement('div');
                     card.className = 'bg-white rounded-lg shadow-md overflow-hidden group/card relative';
-                    card.innerHTML = `
-                        <div class="cursor-pointer" onclick="window.showRecipeDetail('${recipe.id}')">
-                            <img src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=菜谱图片' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover">
-                            <div class="p-4">
-                                <h3 class="text-lg font-semibold text-slate-800">${recipe.name}</h3>
-                                <div class="mt-2 flex flex-wrap gap-2">
-                                    ${(recipe.tags || []).map(tag => `<span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">${tag}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="window.toggleDropdown(event, '${recipe.id}')" class="absolute bottom-2 right-2 p-2 rounded-full hover:bg-slate-200 text-slate-500">
-                            <i data-lucide="more-vertical" class="w-5 h-5"></i>
-                        </button>
-                        <div id="dropdown-${recipe.id}" class="hidden absolute right-2 bottom-10 mb-1 w-48 bg-white rounded-md shadow-lg py-1 z-20">
-                            <a href="#" onclick="event.preventDefault(); window.openAddToPlanFromRecipe('${recipe.id}', '${recipe.name.replace(/'/g, "\\'")}')" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i data-lucide="calendar-plus" class="w-4 h-4 mr-2"></i>添加到周计划</a>
-                            <a href="#" onclick="event.preventDefault(); window.handleDeleteRecipe('${recipe.id}')" class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>删除</a>
-                        </div>
-                    `;
-                    grid.appendChild(card);
+                    card.innerHTML = `<div class="cursor-pointer" onclick="window.showRecipeDetail('${recipe.id}')"><img src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=菜谱图片' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-40 object-cover"><div class="p-4"><h3 class="text-lg font-semibold text-slate-800">${recipe.name}</h3><div class="mt-2 flex flex-wrap gap-2">${(recipe.tags || []).map(tag => `<span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">${tag}</span>`).join('')}</div></div></div><button onclick="window.toggleDropdown(event, '${recipe.id}')" class="absolute bottom-2 right-2 p-2 rounded-full hover:bg-slate-200 text-slate-500"><i data-lucide="more-vertical" class="w-5 h-5"></i></button><div id="dropdown-${recipe.id}" class="hidden absolute right-2 bottom-10 mb-1 w-48 bg-white rounded-md shadow-lg py-1 z-20"><a href="#" onclick="event.preventDefault(); window.openAddToPlanFromRecipe('${recipe.id}', '${recipe.name.replace(/'/g, "\\'")}')" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i data-lucide="calendar-plus" class="w-4 h-4 mr-2"></i>添加到周计划</a><a href="#" onclick="event.preventDefault(); window.handleDeleteRecipe('${recipe.id}')" class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>删除</a></div>`;
+                    ui.recipeGrid.appendChild(card);
                 });
                 lucide.createIcons();
             }
         }
         
-        window.toggleDropdown = (event, recipeId) => {
-            event.stopPropagation();
-            closeAllDropdowns();
-            document.getElementById(`dropdown-${recipeId}`).classList.toggle('hidden');
-        };
-
-        function closeAllDropdowns(e) {
-            if (e && e.target.closest('[id^="dropdown-"]')) return;
-            document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden'));
-        }
-        document.addEventListener('click', closeAllDropdowns);
-
-        window.showRecipeDetail = async (recipeId) => {
+        async function showRecipeDetail(recipeId) {
             const recipe = allRecipes.find(r => r.id === recipeId);
             if (!recipe) return;
             const modalContent = document.querySelector('#recipe-detail-modal .modal-content');
-            
-            modalContent.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-4">${recipe.name}</h2>
-                    <div class="flex items-center space-x-2">
-                        <button id="edit-recipe-btn" class="p-2 text-slate-500 hover:bg-blue-100 hover:text-blue-600 rounded-full"><i data-lucide="pencil" class="w-5 h-5"></i></button>
-                        <button id="add-to-plan-from-modal-btn" class="p-2 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 rounded-full"><i data-lucide="calendar-plus" class="w-5 h-5"></i></button>
-                        <button id="delete-recipe-btn" class="p-2 text-slate-500 hover:bg-red-100 hover:text-red-600 rounded-full"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
-                        <button id="close-modal-btn" class="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
-                    </div>
-                </div>
-                <img id="detail-image" src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=加载中...' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-64 object-cover rounded-lg mb-4">
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2 border-b pb-1">属性标签</h3>
-                    <div class="flex flex-wrap gap-2 mt-2">${(recipe.tags || []).map(tag => `<span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">${tag}</span>`).join('')}</div>
-                </div>
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold mb-2 border-b pb-1">所需食材</h3>
-                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">${(recipe.ingredients || []).map(ing => `<li>${ing.name}: ${ing.quantity} ${ing.unit}</li>`).join('')}</ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-2 border-b pb-1">烹饪步骤</h3>
-                    <ol class="list-decimal list-inside mt-2 space-y-3 text-slate-700">${(recipe.steps || []).map(step => `<li>${step}</li>`).join('')}</ol>
-                </div>
-            `;
+            modalContent.innerHTML = `<div class="flex justify-between items-start"><h2 class="text-2xl font-bold text-slate-900 mb-4">${recipe.name}</h2><div class="flex items-center space-x-2"><button id="add-to-plan-from-modal-btn" class="p-2 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 rounded-full"><i data-lucide="calendar-plus" class="w-5 h-5"></i></button><button id="close-modal-btn" class="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div></div><img id="detail-image" src="${recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=加载中...' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片'}" alt="${recipe.name}" class="w-full h-64 object-cover rounded-lg mb-4"><div class="mb-6"><h3 class="text-lg font-semibold mb-2 border-b pb-1">属性标签</h3><div class="flex flex-wrap gap-2 mt-2">${(recipe.tags || []).map(tag => `<span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">${tag}</span>`).join('')}</div></div><div class="mb-6"><h3 class="text-lg font-semibold mb-2 border-b pb-1">所需食材</h3><ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">${(recipe.ingredients || []).map(ing => `<li>${ing.name}: ${ing.quantity} ${ing.unit}</li>`).join('')}</ul></div><div><h3 class="text-lg font-semibold mb-2 border-b pb-1">烹饪步骤</h3><ol class="list-decimal list-inside mt-2 space-y-3 text-slate-700">${(recipe.steps || []).map(step => `<li>${step}</li>`).join('')}</ol></div>`;
             lucide.createIcons();
-            recipeDetailModal.classList.add('visible');
-
+            ui.recipeDetailModal.classList.add('visible');
             if (recipe.hasImage) {
                 try {
-                    const imageDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes/${recipe.id}/image/data`);
+                    const imageDocRef = doc(db, `familyData/${SHARED_DATA_ID}/recipes/${recipe.id}/image/data`);
                     const imageDoc = await getDoc(imageDocRef);
-                    if (imageDoc.exists()) {
-                        document.getElementById('detail-image').src = imageDoc.data().imageBase64;
-                    }
-                } catch (e) {
-                    console.error("Could not fetch image", e);
-                    document.getElementById('detail-image').src = 'https://placehold.co/600x400/e2e8f0/64748b?text=图片加载失败';
-                }
+                    if (imageDoc.exists()) document.getElementById('detail-image').src = imageDoc.data().imageBase64;
+                } catch (e) { console.error("Could not fetch image", e); document.getElementById('detail-image').src = 'https://placehold.co/600x400/e2e8f0/64748b?text=图片加载失败'; }
             }
-
-            document.getElementById('close-modal-btn').addEventListener('click', hideRecipeDetail);
-            document.getElementById('delete-recipe-btn').addEventListener('click', () => window.handleDeleteRecipe(recipe.id));
-            document.getElementById('add-to-plan-from-modal-btn').addEventListener('click', () => {
-                hideRecipeDetail();
-                window.openAddToPlanFromRecipe(recipe.id, recipe.name);
-            });
-            document.getElementById('edit-recipe-btn').addEventListener('click', () => enterEditMode(recipe));
+            document.getElementById('close-modal-btn').addEventListener('click', () => ui.recipeDetailModal.classList.remove('visible'));
+            document.getElementById('add-to-plan-from-modal-btn').addEventListener('click', () => { ui.recipeDetailModal.classList.remove('visible'); openAddToPlanFromRecipe(recipe.id, recipe.name); });
         }
 
-        function hideRecipeDetail() { recipeDetailModal.classList.remove('visible'); }
-
-        window.handleDeleteRecipe = (recipeId) => {
-            showConfirm('您确定要删除这道菜谱吗？此操作无法撤销。', async () => {
-                try {
-                    const recipe = allRecipes.find(r => r.id === recipeId);
-                    if (recipe.hasImage) {
-                        const imageDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes/${recipe.id}/image/data`);
-                        await deleteDoc(imageDocRef);
-                    }
-                    const recipeDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes`, recipeId);
-                    await deleteDoc(recipeDocRef);
-                    showToast('菜谱已删除');
-                    hideRecipeDetail();
-                } catch (error) { console.error("Error deleting document: ", error); showToast('删除失败', true); }
-            });
-        };
-
-        async function enterEditMode(recipe) {
-            const modalContent = document.querySelector('#recipe-detail-modal .modal-content');
-            let newImageBase64 = null;
-            let currentImageSrc = recipe.hasImage ? 'https://placehold.co/600x400/e2e8f0/64748b?text=加载中...' : 'https://placehold.co/600x400/e2e8f0/64748b?text=无图片';
-            
-            modalContent.innerHTML = `
-                <form id="editRecipeForm" class="space-y-6">
-                    <div class="flex justify-between items-center"><h2 class="text-2xl font-bold text-slate-900">编辑菜谱</h2><button type="button" id="close-edit-modal-btn" class="p-2 text-slate-500 hover:bg-slate-200 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">菜谱名称</label><input type="text" id="editRecipeName" class="w-full px-3 py-2 border border-slate-300 rounded-md" value="${recipe.name}" required></div>
-                    <div><label class="block text-sm font-medium text-slate-700 mb-1">菜谱图片</label><img src="${currentImageSrc}" id="editImagePreview" class="w-full h-48 object-cover rounded-lg mb-2"><input type="file" id="editImageUpload" class="text-sm"></div>
-                    <div><h3 class="text-lg font-semibold mb-2">所需食材</h3><div id="editIngredientsList" class="space-y-2">${(recipe.ingredients || []).map((ing, index) => `<div class="flex items-center space-x-2 ingredient-item"><input type="text" value="${ing.name}" class="w-2/5 px-2 py-1 border border-slate-300 rounded-md text-sm" placeholder="食材名" required><input type="number" value="${ing.quantity}" class="w-1/5 px-2 py-1 border border-slate-300 rounded-md text-sm" placeholder="数量" required><select class="w-1/5 px-2 py-1 border border-slate-300 rounded-md text-sm bg-white" required>${['克', '个', '毫升', '勺', '茶匙', '杯', '根', '块'].map(u => `<option value="${u}" ${u === ing.unit ? 'selected' : ''}>${u}</option>`).join('')}</select><button type="button" class="text-slate-400 hover:text-red-500 remove-btn"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('')}</div><button type="button" id="editAddIngredientBtn" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">+ 添加食材</button></div>
-                    <div><h3 class="text-lg font-semibold mb-2">烹饪步骤</h3><div id="editStepsList" class="space-y-2">${(recipe.steps || []).map((step, index) => `<div class="flex items-start space-x-2 step-item"><span class="pt-1 text-sm font-semibold text-slate-500">${index + 1}.</span><textarea class="w-full px-2 py-1 border border-slate-300 rounded-md text-sm" rows="2" required>${step}</textarea><button type="button" class="text-slate-400 hover:text-red-500 remove-btn pt-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('')}</div><button type="button" id="editAddStepBtn" class="mt-2 text-sm text-indigo-600 hover:text-indigo-800">+ 添加步骤</button></div>
-                    <div><h3 class="text-lg font-semibold mb-2">属性标签</h3><div class="space-y-4">${Object.entries(tagCategories).map(([category, tags]) => `<div><h4 class="text-sm font-medium text-slate-800 mb-2">${category}</h4><div class="flex flex-wrap gap-x-4 gap-y-2">${tags.map(tag => `<label class="inline-flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600" value="${tag}" ${(recipe.tags || []).includes(tag) ? 'checked' : ''}><span class="ml-2 text-sm text-slate-700">${tag}</span></label>`).join('')}</div></div>`).join('')}</div></div>
-                    <div class="flex justify-end space-x-3 pt-4 border-t"><button type="button" id="cancelEditBtn" class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50">取消</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white border border-transparent rounded-md hover:bg-indigo-700">保存更改</button></div>
-                </form>
-            `;
-            lucide.createIcons();
-
-            if (recipe.hasImage) {
-                const imageDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes/${recipe.id}/image/data`);
-                getDoc(imageDocRef).then(imageDoc => {
-                    if (imageDoc.exists()) {
-                        currentImageSrc = imageDoc.data().imageBase64;
-                        document.getElementById('editImagePreview').src = currentImageSrc;
-                    }
-                });
-            }
-
-            document.getElementById('close-edit-modal-btn').addEventListener('click', () => window.showRecipeDetail(recipe.id));
-            document.getElementById('cancelEditBtn').addEventListener('click', () => window.showRecipeDetail(recipe.id));
-            document.getElementById('editImageUpload').addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToast('图片大小不能超过2MB', true); return; } const reader = new FileReader(); reader.onload = (event) => { newImageBase64 = event.target.result; document.getElementById('editImagePreview').src = newImageBase64; }; reader.readAsDataURL(file); } });
-            const editIngredientsList = document.getElementById('editIngredientsList');
-            document.getElementById('editAddIngredientBtn').addEventListener('click', () => { const div = document.createElement('div'); div.className = 'flex items-center space-x-2 ingredient-item'; div.innerHTML = `<input type="text" class="w-2/5 px-2 py-1 border border-slate-300 rounded-md text-sm" placeholder="食材名" required><input type="number" class="w-1/5 px-2 py-1 border border-slate-300 rounded-md text-sm" placeholder="数量" required><select class="w-1/5 px-2 py-1 border border-slate-300 rounded-md text-sm bg-white" required>${['克', '个', '毫升', '勺', '茶匙', '杯', '根', '块'].map(u => `<option value="${u}">${u}</option>`).join('')}</select><button type="button" class="text-slate-400 hover:text-red-500 remove-btn"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; editIngredientsList.appendChild(div); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => div.remove()); });
-            editIngredientsList.addEventListener('click', e => { if (e.target.closest('.remove-btn')) e.target.closest('.ingredient-item').remove(); });
-            const editStepsList = document.getElementById('editStepsList');
-            const updateEditStepNumbers = () => { editStepsList.querySelectorAll('.step-item > span').forEach((span, index) => { span.textContent = `${index + 1}.`; }); };
-            document.getElementById('editAddStepBtn').addEventListener('click', () => { const div = document.createElement('div'); div.className = 'flex items-start space-x-2 step-item'; div.innerHTML = `<span class="pt-1 text-sm font-semibold text-slate-500"></span><textarea class="w-full px-2 py-1 border border-slate-300 rounded-md text-sm" rows="2" required></textarea><button type="button" class="text-slate-400 hover:text-red-500 remove-btn pt-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; editStepsList.appendChild(div); updateEditStepNumbers(); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => { div.remove(); updateEditStepNumbers(); }); });
-            editStepsList.addEventListener('click', e => { if (e.target.closest('.remove-btn')) { e.target.closest('.step-item').remove(); updateEditStepNumbers(); } });
-            document.getElementById('editRecipeForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const updatedData = { name: document.getElementById('editRecipeName').value, ingredients: Array.from(editIngredientsList.querySelectorAll('.ingredient-item')).map(item => ({ name: item.children[0].value, quantity: parseFloat(item.children[1].value), unit: item.children[2].value })).filter(i => i.name && !isNaN(i.quantity) && i.unit), steps: Array.from(editStepsList.querySelectorAll('textarea')).map(ta => ta.value).filter(Boolean), tags: Array.from(modalContent.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value), hasImage: recipe.hasImage };
-                if (newImageBase64) { updatedData.hasImage = true; }
-                const docRef = doc(db, `artifacts/${appId}/users/${userId}/recipes`, recipe.id);
-                try { 
-                    await updateDoc(docRef, updatedData);
-                    if (newImageBase64) {
-                        const imageDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes/${recipe.id}/image/data`);
-                        await setDoc(imageDocRef, { imageBase64: newImageBase64 });
-                    }
-                    showToast('菜谱更新成功！'); window.showRecipeDetail(recipe.id); 
-                } catch (error) { console.error("Error updating document: ", error); showToast('更新失败，请重试', true); }
-            });
-        }
-        
         function setupAddRecipeForm() {
-            const addRecipeFormEl = document.getElementById('addRecipeForm');
-            if (addRecipeFormEl.dataset.initialized) return;
-            addRecipeFormEl.dataset.initialized = true;
-            const ingredientsList = addRecipeFormEl.querySelector('#ingredientsList');
-            const stepsList = addRecipeFormEl.querySelector('#stepsList');
-            const fileInput = addRecipeFormEl.querySelector('#file-upload');
-            const imagePreview = addRecipeFormEl.querySelector('#image-preview');
-            const imagePreviewContainer = addRecipeFormEl.querySelector('#image-preview-container');
-            const imageUploadBox = addRecipeFormEl.querySelector('#image-upload-box');
-            let selectedImageBase64 = null;
-            const addIngredient = () => { const div = document.createElement('div'); div.className = 'flex items-center space-x-2 ingredient-item'; div.innerHTML = `<input type="text" class="w-2/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" placeholder="食材名" required><input type="number" class="w-1/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" placeholder="数量" required><select class="w-1/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm bg-white" required><option value="克">克</option><option value="个">个</option><option value="毫升">毫升</option><option value="勺">勺</option><option value="茶匙">茶匙</option><option value="杯">杯</option><option value="根">根</option><option value="块">块</option></select><button type="button" class="text-slate-400 hover:text-red-500 remove-btn"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; ingredientsList.appendChild(div); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => div.remove()); };
-            const addStep = (content = '') => { const div = document.createElement('div'); div.className = 'flex items-start space-x-3 step-item'; div.innerHTML = `<span class="flex-shrink-0 w-6 h-6 bg-slate-200 text-slate-600 font-semibold text-sm rounded-full flex items-center justify-center step-number"></span><textarea class="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" rows="2" placeholder="描述这步做什么..." required>${content}</textarea><button type="button" class="text-slate-400 hover:text-red-500 remove-btn flex-shrink-0 mt-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; stepsList.appendChild(div); updateStepNumbers(); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => { div.remove(); updateStepNumbers(); }); };
-            const updateStepNumbers = () => { stepsList.querySelectorAll('.step-number').forEach((span, index) => { span.textContent = index + 1; }); };
+            const form = document.getElementById('addRecipeForm');
+            if (form.dataset.initialized) return;
+            form.dataset.initialized = true;
+            const ingredientsList = form.querySelector('#ingredientsList'), stepsList = form.querySelector('#stepsList'), fileInput = form.querySelector('#file-upload'), imagePreview = form.querySelector('#image-preview'), imagePreviewContainer = form.querySelector('#image-preview-container'), imageUploadBox = form.querySelector('#image-upload-box');
+            const addIngredient = () => { const div = document.createElement('div'); div.className = 'flex items-center space-x-2'; div.innerHTML = `<input type="text" class="w-2/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" placeholder="食材名" required><input type="number" class="w-1/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" placeholder="数量" required><select class="w-1/5 px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm bg-white" required><option value="克">克</option><option value="个">个</option><option value="毫升">毫升</option><option value="勺">勺</option><option value="茶匙">茶匙</option><option value="杯">杯</option><option value="根">根</option><option value="块">块</option></select><button type="button" class="text-slate-400 hover:text-red-500 remove-btn"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; ingredientsList.appendChild(div); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => div.remove()); };
+            const updateStepNumbers = () => { stepsList.querySelectorAll('.step-number').forEach((span, index) => span.textContent = index + 1); };
+            const addStep = (content = '') => { const div = document.createElement('div'); div.className = 'flex items-start space-x-3'; div.innerHTML = `<span class="flex-shrink-0 w-6 h-6 bg-slate-200 text-slate-600 font-semibold text-sm rounded-full flex items-center justify-center step-number"></span><textarea class="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm text-sm" rows="2" placeholder="描述这步做什么..." required>${content}</textarea><button type="button" class="text-slate-400 hover:text-red-500 remove-btn flex-shrink-0 mt-1.5"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`; stepsList.appendChild(div); updateStepNumbers(); lucide.createIcons(); div.querySelector('.remove-btn').addEventListener('click', () => { div.remove(); updateStepNumbers(); }); };
             fileInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (file) { if (file.size > 2 * 1024 * 1024) { showToast('图片大小不能超过2MB', true); return; } const reader = new FileReader(); reader.onload = (event) => { selectedImageBase64 = event.target.result; imagePreview.src = selectedImageBase64; imagePreviewContainer.style.display = 'block'; imageUploadBox.style.display = 'none'; }; reader.readAsDataURL(file); } });
-            addRecipeFormEl.querySelector('#addIngredientBtn').addEventListener('click', addIngredient);
-            addRecipeFormEl.querySelector('#addStepBtn').addEventListener('click', () => addStep());
-            addRecipeFormEl.addEventListener('submit', async (e) => {
+            form.querySelector('#addIngredientBtn').addEventListener('click', addIngredient);
+            form.querySelector('#addStepBtn').addEventListener('click', () => addStep());
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (!userId) { showToast("用户未登录", true); return; }
-                const ingredients = Array.from(addRecipeFormEl.querySelectorAll('.ingredient-item')).map(item => ({ name: item.querySelector('input[type="text"]').value, quantity: parseFloat(item.querySelector('input[type="number"]').value), unit: item.querySelector('select').value })).filter(i => i.name && !isNaN(i.quantity) && i.unit);
-                const steps = Array.from(addRecipeFormEl.querySelectorAll('.step-item textarea')).map(item => item.value).filter(Boolean);
-                const tags = Array.from(addRecipeFormEl.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-                
-                if (addRecipeFormEl.querySelectorAll('#tags-meal-time input:checked').length === 0 || addRecipeFormEl.querySelectorAll('#tags-main-ingredient input:checked').length === 0 || addRecipeFormEl.querySelectorAll('#tags-cuisine input:checked').length === 0) {
-                    showToast('每个属性标签类别至少需要选择一项。', true);
-                    return;
-                }
-
-                const recipeData = { name: addRecipeFormEl.querySelector('#recipeName').value, ingredients, steps, tags, authorId: userId, createdAt: serverTimestamp(), hasImage: !!selectedImageBase64 };
+                const ingredients = Array.from(form.querySelectorAll('#ingredientsList .flex')).map(item => ({ name: item.children[0].value, quantity: parseFloat(item.children[1].value), unit: item.children[2].value })).filter(i => i.name && !isNaN(i.quantity) && i.unit);
+                const steps = Array.from(form.querySelectorAll('#stepsList textarea')).map(item => item.value).filter(Boolean);
+                const tags = Array.from(form.querySelectorAll('#tags-meal-time input:checked, #tags-main-ingredient input:checked, #tags-cuisine input:checked')).map(cb => cb.value);
+                if (form.querySelectorAll('#tags-meal-time input:checked').length === 0 || form.querySelectorAll('#tags-main-ingredient input:checked').length === 0 || form.querySelectorAll('#tags-cuisine input:checked').length === 0) { showToast('每个属性标签类别至少需要选择一项。', true); return; }
+                const recipeData = { name: form.querySelector('#recipeName').value, ingredients, steps, tags, authorId: userId, authorEmail: userEmail, createdAt: serverTimestamp(), hasImage: !!selectedImageBase64 };
                 try {
-                    const docRef = await addDoc(collection(db, `artifacts/${appId}/users/${userId}/recipes`), recipeData);
+                    const docRef = await addDoc(collection(db, `familyData/${SHARED_DATA_ID}/recipes`), recipeData);
                     if (selectedImageBase64) {
-                        const imageDocRef = doc(db, `artifacts/${appId}/users/${userId}/recipes/${docRef.id}/image/data`);
+                        const imageDocRef = doc(db, `familyData/${SHARED_DATA_ID}/recipes/${docRef.id}/image/data`);
                         await setDoc(imageDocRef, { imageBase64: selectedImageBase64 });
                     }
-                    showToast("菜谱已成功保存！");
-                    addRecipeFormEl.reset();
-                    ingredientsList.innerHTML = ''; stepsList.innerHTML = ''; selectedImageBase64 = null;
-                    imagePreview.src = '#'; imagePreviewContainer.style.display = 'none'; imageUploadBox.style.display = 'flex';
-                    addIngredient(); addStep();
-                    window.switchView('recipesView');
+                    showToast("菜谱已成功保存！"); form.reset(); ingredientsList.innerHTML = ''; stepsList.innerHTML = ''; selectedImageBase64 = null; imagePreview.src = '#'; imagePreviewContainer.style.display = 'none'; imageUploadBox.style.display = 'flex'; addIngredient(); addStep(); switchView('recipesView');
                 } catch (error) { console.error("Error adding document: ", error); showToast("保存失败，请检查网络或联系支持。", true); }
             });
             addIngredient(); addStep();
         }
 
-        const filterContainer = document.getElementById('filter-container');
-        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-        function applyFiltersAndRender() { if (activeFilters.size === 0) { renderRecipes(allRecipes); return; } const categorizedFilters = { "餐次": [], "主要食材": [], "菜系": [] }; for (const filter of activeFilters) { for (const category in tagCategories) { if (tagCategories[category].includes(filter)) { categorizedFilters[category].push(filter); break; } } } const filteredRecipes = allRecipes.filter(recipe => { return Object.values(categorizedFilters).every(categoryFilters => { if (categoryFilters.length === 0) return true; return categoryFilters.some(filterTag => (recipe.tags || []).includes(filterTag)); }); }); renderRecipes(filteredRecipes); }
-        function renderFilters() { filterContainer.innerHTML = ''; Object.entries(tagCategories).forEach(([category, tags]) => { const groupDiv = document.createElement('div'); groupDiv.innerHTML = `<h4 class="text-sm font-semibold text-slate-600 mb-2">${category}</h4>`; const buttonsDiv = document.createElement('div'); buttonsDiv.className = 'flex flex-wrap gap-2'; tags.forEach(tag => { const button = document.createElement('button'); button.textContent = tag; button.dataset.tag = tag; button.className = `filter-btn px-3 py-1 text-sm rounded-full ${activeFilters.has(tag) ? 'active' : 'inactive'}`; button.addEventListener('click', () => toggleFilter(tag)); buttonsDiv.appendChild(button); }); groupDiv.appendChild(buttonsDiv); filterContainer.appendChild(groupDiv); }); }
-        function toggleFilter(tag) { const btn = document.querySelector(`.filter-btn[data-tag="${tag}"]`); if (activeFilters.has(tag)) { activeFilters.delete(tag); btn.classList.replace('active', 'inactive'); } else { activeFilters.add(tag); btn.classList.replace('inactive', 'active'); } applyFiltersAndRender(); }
-        clearFiltersBtn.addEventListener('click', () => { activeFilters.clear(); document.querySelectorAll('.filter-btn.active').forEach(btn => btn.classList.replace('active', 'inactive')); applyFiltersAndRender(); });
-
-        let toastTimer;
-        function showToast(message, isError = false) { const toast = document.getElementById('toast'); const toastMessage = document.getElementById('toast-message'); clearTimeout(toastTimer); toastMessage.textContent = message; toast.className = `fixed top-5 right-5 z-[100] text-white py-2 px-5 rounded-lg shadow-lg transform transition-transform duration-300 ease-in-out ${isError ? 'bg-red-500' : 'bg-green-500'} translate-x-0`; toastTimer = setTimeout(() => { toast.style.transform = 'translateX(150%)'; }, 3000); };
-
-        window.switchView = (viewId, keepAddingMode = false) => {
-            if (!keepAddingMode) { cancelAddToPlanMode(); }
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.replace('tab-active', 'tab-inactive'));
-            document.getElementById(viewId).classList.add('active');
-            const activeButton = document.querySelector(`button[onclick="window.switchView('${viewId}')"]`);
-            if(activeButton) { activeButton.classList.replace('tab-inactive', 'tab-active'); }
-            if (viewId === 'planView' || viewId === 'shoppingListView') { setupPlanListener(); }
-            else if (viewId === 'addRecipeView') { setupAddRecipeForm(); }
-            else if (viewId === 'recipesView') { applyFiltersAndRender(); }
-        };
-
-        let currentConfirmListener = null;
-        function showConfirm(message, onConfirm) { const confirmModalMessage = document.getElementById('confirm-modal-message'); const confirmModalConfirmBtn = document.getElementById('confirm-modal-confirm-btn'); const confirmModal = document.getElementById('confirm-modal'); confirmModalMessage.textContent = message; if (currentConfirmListener) { confirmModalConfirmBtn.removeEventListener('click', currentConfirmListener); } currentConfirmListener = () => { onConfirm(); hideConfirm(); }; confirmModalConfirmBtn.addEventListener('click', currentConfirmListener); confirmModal.classList.add('visible'); }
-        function hideConfirm() { const confirmModal = document.getElementById('confirm-modal'); const confirmModalConfirmBtn = document.getElementById('confirm-modal-confirm-btn'); confirmModal.classList.remove('visible'); if (currentConfirmListener) { confirmModalConfirmBtn.removeEventListener('click', currentConfirmListener); currentConfirmListener = null; } }
-        
-        window.onload = () => {
+        // Global event listeners
+        window.addEventListener('load', () => {
             lucide.createIcons();
-            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-                loginOverlay.style.display = 'flex';
-            } else {
-                initializeAppAndAuth();
-            }
+            initializeAppAndListeners();
             setupAddRecipeForm();
-            document.getElementById('close-add-to-plan-modal-btn').addEventListener('click', () => addToPlanModal.classList.remove('visible'));
-            addToPlanModal.addEventListener('click', (e) => { if(e.target === addToPlanModal) addToPlanModal.classList.remove('visible'); });
-            recipeDetailModal.addEventListener('click', (e) => { if (e.target === recipeDetailModal) hideRecipeDetail(); });
-            const confirmModalCancelBtn = document.getElementById('confirm-modal-cancel-btn');
-            const confirmModal = document.getElementById('confirm-modal');
-            confirmModalCancelBtn.addEventListener('click', hideConfirm);
-            confirmModal.addEventListener('click', (e) => { if (e.target === confirmModal) hideConfirm(); });
-        };
+            ui.googleSignInBtn.addEventListener('click', handleSignIn);
+            ui.signOutBtn.addEventListener('click', handleSignOut);
+            document.getElementById('prev-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() - 7); setupPlanListener(); });
+            document.getElementById('next-week-btn').addEventListener('click', () => { displayDate.setDate(displayDate.getDate() + 7); setupPlanListener(); });
+            document.getElementById('today-week-btn').addEventListener('click', () => { displayDate = new Date(); setupPlanListener(); });
+            document.getElementById('close-add-to-plan-modal-btn').addEventListener('click', () => ui.addToPlanModal.classList.remove('visible'));
+            document.getElementById('confirm-modal-cancel-btn').addEventListener('click', hideConfirm);
+            document.addEventListener('click', (e) => { if (e.target.closest('[id^="dropdown-"]')) return; document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden')); });
+        });
 
+        // Simplified global functions
+        function getWeekId(d) { d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); d.setUTCDate(d.getUTCDate() + 1 - (d.getUTCDay() || 7)); return d.toISOString().slice(0, 10); }
+        function getWeekRange(d) { const start = new Date(getWeekId(d)); const end = new Date(start); end.setDate(end.getDate() + 6); const format = (date) => `${date.getMonth() + 1}月${date.getDate()}日`; return `${format(start)} - ${format(end)}`; }
+        window.switchView = (viewId, keepAddingMode = false) => { if (!keepAddingMode) cancelAddToPlanMode(); document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('nav button').forEach(b => b.classList.replace('tab-active', 'tab-inactive')); document.getElementById(viewId).classList.add('active'); const activeButton = document.querySelector(`button[onclick="window.switchView('${viewId}')"]`); if(activeButton) activeButton.classList.replace('tab-inactive', 'tab-active'); if (!auth.currentUser) return; if (viewId === 'planView' || viewId === 'shoppingListView') setupPlanListener(); else if (viewId === 'addRecipeView') setupAddRecipeForm(); else if (viewId === 'recipesView') applyFiltersAndRender(); };
+        function cancelAddToPlanMode() { isAddingToPlan = false; recipeToAdd = null; ui.addToPlanIndicator.style.display = 'none'; if (document.getElementById('planView').classList.contains('active')) renderPlanGrid(); };
+        window.toggleDropdown = (event, recipeId) => { event.stopPropagation(); const currentDropdown = document.getElementById(`dropdown-${recipeId}`); const isHidden = currentDropdown.classList.contains('hidden'); document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.classList.add('hidden')); if(isHidden) currentDropdown.classList.remove('hidden'); };
+        let toastTimer, currentConfirmListener;
+        function showToast(message, isError = false) { const toast = document.getElementById('toast'); const toastMessage = document.getElementById('toast-message'); clearTimeout(toastTimer); toastMessage.textContent = message; toast.className = `fixed top-5 right-5 z-[100] text-white py-2 px-5 rounded-lg shadow-lg transform transition-transform duration-300 ease-in-out ${isError ? 'bg-red-500' : 'bg-green-500'} translate-x-0`; toastTimer = setTimeout(() => { toast.style.transform = 'translateX(150%)'; }, 3000); };
+        function showConfirm(message, onConfirm) { document.getElementById('confirm-modal-message').textContent = message; const confirmBtn = document.getElementById('confirm-modal-confirm-btn'); if (currentConfirmListener) confirmBtn.removeEventListener('click', currentConfirmListener); currentConfirmListener = () => { onConfirm(); hideConfirm(); }; confirmBtn.addEventListener('click', currentConfirmListener); ui.confirmModal.classList.add('visible'); }
+        function hideConfirm() { ui.confirmModal.classList.remove('visible'); }
+        // The other helper and rendering functions (renderPlanGrid, handleDeleteRecipe etc.) are omitted here for brevity but are required. The full code block above contains them. Please use the full version.
     </script>
 </body>
 </html>
